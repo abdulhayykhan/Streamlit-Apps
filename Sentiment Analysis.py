@@ -1,6 +1,13 @@
 import streamlit as st
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
+import subprocess
+
+try:
+    import nltk
+except ModuleNotFoundError:
+    subprocess.run(["pip", "install", "nltk"])
+    import nltk
 
 nltk.download('vader_lexicon')
 sia = SentimentIntensityAnalyzer()
