@@ -2,22 +2,21 @@ import streamlit as st
 import requests
 import time
 
-def get_exchange_rate(base_currency, target_currency):
-    api_key = "your_api_key_here"  # Replace with your API key
-    if api_key == "your_api_key_here" or not api_key:
-        st.error("❌ API key is missing! Please provide a valid API key.")
+def get_exchange_rate(api_key, base_currency, target_currency):
+    if not api_key or api_key == "ab96ac0a83e65797e5a39f59":
+        st.error("❌ API key is missing! Please enter a valid API key.")
         return None
     
-    url = f"https://v6.exchangerate-api.com/v6/{ab96ac0a83e65797e5a39f59}/latest/{base_currency}"
+    url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/{base_currency}"
     try:
         response = requests.get(url)
-        response.raise_for_status()  # Raise an error for bad responses (4xx, 5xx)
+        response.raise_for_status()
         data = response.json()
         
         if "conversion_rates" in data:
             return data["conversion_rates"].get(target_currency, None)
         else:
-            st.error("❌ Unexpected API response format.")
+            st.error(f"❌ Unexpected API response: {data}")
             return None
     except requests.exceptions.RequestException as e:
         st.error(f"❌ API Request failed: {e}")
@@ -27,6 +26,9 @@ def main():
     st.set_page_config(page_title="Currency Converter", page_icon="💰", layout="centered")
     st.title("💱 Currency Converter")
     st.markdown("### Convert currencies instantly with real-time exchange rates!")
+    
+    # API Key Input
+    api_key = st.text_input("🔑 Enter your ExchangeRate-API key:", type="password")
     
     # Currency selection
     currencies = ["USD", "EUR", "GBP", "INR", "JPY", "CAD", "AUD", "CNY", "PKR", "AED", "SAR", "QAR", "MYR", "THB", "SGD", "TRY"]
@@ -41,7 +43,7 @@ def main():
     if st.button("🔄 Convert"):
         with st.spinner("Fetching latest exchange rates..."):
             time.sleep(1)
-            rate = get_exchange_rate(base_currency, target_currency)
+            rate = get_exchange_rate(api_key, base_currency, target_currency)
         
         if rate:
             converted_amount = amount * rate
