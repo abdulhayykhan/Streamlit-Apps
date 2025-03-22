@@ -4,13 +4,23 @@ import time
 
 def get_exchange_rate(base_currency, target_currency):
     api_key = "your_api_key_here"  # Replace with your API key
-    url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/{base_currency}"
-    response = requests.get(url)
-    data = response.json()
+    if api_key == "your_api_key_here" or not api_key:
+        st.error("❌ API key is missing! Please provide a valid API key.")
+        return None
     
-    if response.status_code == 200 and "conversion_rates" in data:
-        return data["conversion_rates"].get(target_currency, None)
-    else:
+    url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/{base_currency}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an error for bad responses (4xx, 5xx)
+        data = response.json()
+        
+        if "conversion_rates" in data:
+            return data["conversion_rates"].get(target_currency, None)
+        else:
+            st.error("❌ Unexpected API response format.")
+            return None
+    except requests.exceptions.RequestException as e:
+        st.error(f"❌ API Request failed: {e}")
         return None
 
 def main():
@@ -38,7 +48,7 @@ def main():
             st.success(f"💰 {amount} {base_currency} = {converted_amount:.2f} {target_currency}")
             st.metric(label=f"Exchange Rate ({base_currency} → {target_currency})", value=f"{rate:.4f}")
         else:
-            st.error("❌ Failed to fetch exchange rate. Please try again later.")
+            st.error("❌ Failed to fetch exchange rate. Please check your API key or try again later.")
     
     st.markdown("---")
     st.info("🔹 Exchange rates are fetched in real-time from ExchangeRate-API.")
