@@ -19,7 +19,7 @@ def main():
     st.markdown("### Convert currencies instantly with real-time exchange rates!")
     
     # Currency selection
-    currencies = ["USD", "EUR", "GBP", "INR", "JPY", "CAD", "AUD", "CNY"]
+    currencies = ["USD", "EUR", "GBP", "INR", "JPY", "CAD", "AUD", "CNY", "PKR", "AED", "SAR", "QAR", "MYR", "THB", "SGD", "TRY"]
     col1, col2 = st.columns(2)
     with col1:
         base_currency = st.selectbox("Select base currency:", currencies)
