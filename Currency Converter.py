@@ -8,7 +8,7 @@ def get_exchange_rate(base_currency, target_currency):
         st.error("❌ API key is missing! Please provide a valid API key.")
         return None
     
-    url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/{base_currency}"
+    url = f"https://v6.exchangerate-api.com/v6/{ab96ac0a83e65797e5a39f59}/latest/{base_currency}"
     try:
         response = requests.get(url)
         response.raise_for_status()  # Raise an error for bad responses (4xx, 5xx)
