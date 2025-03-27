@@ -14,7 +14,27 @@ def is_valid_key(matrix):
     det = int(np.linalg.det(matrix))
     return det != 0 and det % 26 != 0
 
-st.title("🔐 Cryptogram - Hill Cipher")
+def encrypt_message(msg, key_matrix):
+    """Encrypt the message using Hill Cipher (2x2 matrix)."""
+    msg = msg.replace(" ", "").upper()  # Remove spaces & convert to uppercase
+    if len(msg) % 2 != 0:
+        msg += "X"  # Padding if odd-length
+
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    char_to_num = {char: i for i, char in enumerate(alphabet)}
+    num_to_char = {i: char for i, char in enumerate(alphabet)}
+
+    # Convert text to numbers
+    msg_nums = [char_to_num[char] for char in msg]
+    msg_matrix = np.array(msg_nums).reshape(-1, 2)
+
+    # Encrypt
+    encrypted_matrix = (msg_matrix @ key_matrix) % 26
+    encrypted_text = "".join(num_to_char[num] for row in encrypted_matrix for num in row)
+    
+    return encrypted_text
+
+st.title("🔐 Cryptography")
 
 option = st.radio("Select an action:", ("Encode The Message", "Decode The Message"))
 
@@ -39,6 +59,8 @@ if option == "Encode The Message":
 
     if st.button("🔒 Encode It!"):
         if is_valid_key(key_matrix):
-            st.success("✅ Key is valid! Proceeding with encryption...")
+            encrypted_text = encrypt_message(msg, key_matrix)
+            st.success("✅ Encoding successful!")
+            st.code(f"🔐 Encrypted Message: {encrypted_text}")
         else:
             st.error("❌ The key matrix is non-invertible. Choose another key.")
