@@ -1,7 +1,7 @@
 import streamlit as st
-from Crypto.Cipher import AES, PKCS1_OAEP
-from Crypto.PublicKey import RSA
-from Crypto.Util.Padding import pad, unpad
+from Cryptodome.Cipher import AES, PKCS1_OAEP
+from Cryptodome.PublicKey import RSA
+from Cryptodome.Util.Padding import pad, unpad
 import base64
 
 def generate_rsa_keys():
