@@ -12,9 +12,9 @@ This repository contains various **Streamlit** applications built for interactiv
 
 ### 2. Quote of the Day Generator 📜
 
-- Fetches and displays inspiring quotes using the Quotable API.
+- Fetches and displays inspiring quotes using the **Quotable API**.
 - Interactive UI with a generate button and loading animations.
-- Built with Python, Streamlit, and API Integration.
+- Built with **Python, Streamlit, and API Integration**.
 
 🔹 *More projects coming soon...*
 
