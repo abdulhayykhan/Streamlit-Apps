@@ -38,4 +38,4 @@ if col1.button("Generate Story 📝"):
         st.warning("⚠️ Please enter a keyword to generate a story.")
 
 if col2.button("Clear ❌"):
-    st.experimental_rerun()
+    st.rerun()
