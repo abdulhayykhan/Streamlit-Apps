@@ -1,14 +1,21 @@
 import streamlit as st
 import requests
+import urllib3
+
+# Disable SSL warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def fetch_quote():
     url = "https://api.quotable.io/random"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        return data["content"], data["author"]
-    else:
-        return "Failed to fetch a quote. Try again!", "Unknown"
+    try:
+        response = requests.get(url, verify=False)
+        if response.status_code == 200:
+            data = response.json()
+            return data["content"], data["author"]
+        else:
+            return "Failed to fetch a quote. Try again!", "Unknown"
+    except requests.exceptions.RequestException as e:
+        return f"Error: {str(e)}", "Unknown"
 
 # Streamlit UI
 st.set_page_config(page_title="Quote of the Day", page_icon="📜")
