@@ -2,7 +2,6 @@ import streamlit as st
 import requests
 import urllib3
 
-# Disable SSL warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def fetch_quote():
@@ -17,7 +16,6 @@ def fetch_quote():
     except requests.exceptions.RequestException as e:
         return f"Error: {str(e)}", "Unknown"
 
-# Streamlit UI
 st.set_page_config(page_title="Quote of the Day", page_icon="📜")
 st.title("📜 Quote of the Day Generator")
 
