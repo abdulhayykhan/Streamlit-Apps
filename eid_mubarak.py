@@ -6,9 +6,8 @@ def main():
     st.set_page_config(page_title="Eid Mubarak Greeting", page_icon="🌙")
     st.title("🌙 Eid Mubarak!")
     
-    girlfriend_name = "Alysha"  # Replace with your girlfriend's name
+    girlfriend_name = "Alysha"  
     
-    # Animated Eid Mubarak Message with dynamic updating
     message_placeholder = st.empty()
     full_text = f"Eid Mubarak, {girlfriend_name}! 💖"
     animated_text = ""
@@ -29,7 +28,6 @@ def main():
         """, unsafe_allow_html=True
     )
     
-    # Unique Feature: Infinite Love Animation
     st.markdown(
         """
         <div style='text-align: center;'>
@@ -41,7 +39,6 @@ def main():
         """, unsafe_allow_html=True
     )
     
-    # Unique Feature: Random Eid Wishes
     eid_wishes = [
         "May your life be as sweet as Eid desserts! 🍰",
         "Sending you a moonlit night full of love and happiness! 🌙",
