@@ -7,7 +7,7 @@ girlfriend_name = "Your Girlfriend's Name"  # Change this to her actual name
 st.markdown(
     f"""
     <h2 style='text-align: center; color: #FFA500;'>
-    Eid Mubarak, Alysha! 💖
+    Eid Mubarak, {girlfriend_name}! 💖
     </h2>
     <p style='text-align: center; font-size: 18px;'>
     May this Eid bring you joy, love, and countless blessings! 🌸✨
