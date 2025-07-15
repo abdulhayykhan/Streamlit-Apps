@@ -2,7 +2,11 @@
 
 This repository contains various **Streamlit** applications built for interactive and engaging web-based experiences. Each project is designed to demonstrate different aspects of Python, API integration, data visualization, and machine learning.
 
+---
+
 ## 📌 Projects in This Repository
+
+---
 
 ### 1. Random Joke Generator 🤣
 
@@ -10,13 +14,23 @@ This repository contains various **Streamlit** applications built for interactiv
 - Engaging UI with loading animations and interactive elements.
 - Built with **Python, Streamlit, and API Integration**.
 
+[🔗 View App](https://random-joke-generator-ahk.streamlit.app/)  
+
+---
+
 ### 2. Quote of the Day Generator 📜
 
 - Fetches and displays inspiring quotes using the **Quotable API**.
 - Interactive UI with a generate button and loading animations.
 - Built with **Python, Streamlit, and API Integration**.
 
+[🔗 View App](https://quote-of-the-day-genertator-ahk.streamlit.app/)  
+
+---
+
 🔹 *More projects coming soon...*
+
+---
 
 ## 🛠 Tech Stack
 
@@ -25,13 +39,19 @@ This repository contains various **Streamlit** applications built for interactiv
 - **APIs** 🌍
 - **Machine Learning (Coming Soon!)** 🤖
 
+---
+
 ## 📬 Contributing
 
 Feel free to fork this repository and contribute by adding new Streamlit apps!
 
+---
+
 ## 📢 Connect with Me
 
 If you have suggestions or want to collaborate, feel free to reach out!
+
+---
 
 ## 📜 License
 
