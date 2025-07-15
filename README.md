@@ -57,6 +57,8 @@ If you have suggestions or want to collaborate, feel free to reach out!
 
 This project is licensed under the **MIT License** – feel free to use, modify, and distribute it as per the license terms.
 
+---
+
 💡 Let’s build and learn together! If you find these projects useful, don’t forget to ⭐ the repository!
 
 Happy coding! 🚀
