@@ -1,15 +1,14 @@
 import streamlit as st
 import requests
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, UnidentifiedImageError
 from io import BytesIO
 import textwrap
 
-# --- Config ---
 st.set_page_config(page_title="Motivational Wallpaper Generator", page_icon="🌄")
 st.title("🌄 Motivational Wallpaper Generator")
 st.write("Click below to generate a random motivational wallpaper!")
 
-# --- Function to fetch quote ---
+# --- Fetch motivational quote ---
 def fetch_quote():
     try:
         res = requests.get("https://api.quotable.io/random?tags=inspirational|motivational")
@@ -19,27 +18,33 @@ def fetch_quote():
     except:
         return "Stay positive, work hard, and make it happen!"
 
-# --- Function to fetch image ---
+# --- Fetch random image from Unsplash ---
 def fetch_image():
-    # Nature-based high-quality image from Unsplash
-    image_url = "https://source.unsplash.com/featured/800x600?nature,landscape"
-    res = requests.get(image_url)
-    return Image.open(BytesIO(res.content))
+    # Safer fallback image URL
+    url = "https://picsum.photos/800/600"
+    try:
+        res = requests.get(url)
+        img = Image.open(BytesIO(res.content))
+        return img
+    except UnidentifiedImageError:
+        return None
 
-# --- Overlay text on image ---
+# --- Generate final wallpaper image ---
 def generate_wallpaper(quote_text):
-    bg = fetch_image().convert("RGB")
+    bg = fetch_image()
+    if bg is None:
+        st.error("❌ Failed to load image. Please try again.")
+        return None
+
+    bg = bg.convert("RGB")
     draw = ImageDraw.Draw(bg)
 
-    # Use system font (more consistent across platforms)
     try:
-        font = ImageFont.truetype("arial.ttf", size=28)
+        font = ImageFont.truetype("arial.ttf", 28)
     except:
         font = ImageFont.load_default()
 
-    # Word-wrap the quote to fit nicely
     wrapped = textwrap.wrap(quote_text, width=40)
-
     W, H = bg.size
     text_height = len(wrapped) * 35
     y_text = (H - text_height) // 2
@@ -51,22 +56,22 @@ def generate_wallpaper(quote_text):
 
     return bg
 
-# --- Button ---
+# --- Generate Wallpaper Button ---
 if st.button("✨ Generate Wallpaper"):
-    with st.spinner("Creating your motivational wallpaper..."):
+    with st.spinner("Generating..."):
         quote = fetch_quote()
         wallpaper = generate_wallpaper(quote)
 
-        st.image(wallpaper, caption="🌟 Your Motivational Wallpaper", use_column_width=True)
+        if wallpaper:
+            st.image(wallpaper, caption="🌟 Your Motivational Wallpaper", use_column_width=True)
 
-        # Save to buffer
-        buf = BytesIO()
-        wallpaper.save(buf, format="JPEG")
-        byte_im = buf.getvalue()
+            buf = BytesIO()
+            wallpaper.save(buf, format="JPEG")
+            byte_im = buf.getvalue()
 
-        st.download_button(
-            label="📥 Download Wallpaper",
-            data=byte_im,
-            file_name="motivational_wallpaper.jpg",
-            mime="image/jpeg"
-        )
+            st.download_button(
+                label="📥 Download Wallpaper",
+                data=byte_im,
+                file_name="motivational_wallpaper.jpg",
+                mime="image/jpeg"
+            )
