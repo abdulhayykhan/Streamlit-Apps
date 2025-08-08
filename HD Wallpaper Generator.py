@@ -7,7 +7,7 @@ from io import BytesIO
 UNSPLASH_ACCESS_KEY = "OXzfR4GnNkUzaFbPpwVIfTVLdNwAg2c73GuwueB6ick"
 
 # --- Streamlit UI ---
-st.set_page_config(page_title="HD Wallpaper Generator", layout="wide")
+st.set_page_config(page_title="HD Wallpaper Generator", page_icon="🖼️", layout="wide")
 st.title("🖼️ HD Wallpaper Generator")
 st.markdown("Generate stunning HD wallpapers based on your interests. No quotes, just pure visuals!")
 
@@ -60,4 +60,4 @@ if generate and query:
 
 # --- Footer ---
 st.markdown("---")
-st.markdown("Made with ❤️ by Abdul Hayy Khan using Streamlit + Unsplash API")
+st.caption("Made with ❤️ by Abdul Hayy Khan using Streamlit + Unsplash API")
