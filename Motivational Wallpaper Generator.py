@@ -73,7 +73,7 @@ if st.button("✨ Generate Wallpaper"):
         wallpaper = generate_wallpaper(quote)
 
         if wallpaper:
-            st.image(wallpaper, caption="🌟 Your Motivational Wallpaper", use_column_width=True)
+            st.image(wallpaper, caption="🌟 Your Motivational Wallpaper", use_container_width=True)
 
             buf = BytesIO()
             wallpaper.save(buf, format="JPEG")
