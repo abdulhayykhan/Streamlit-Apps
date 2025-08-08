@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-from PIL import Image, ImageDraw, ImageFont, UnidentifiedImageError
+from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import textwrap
 
@@ -25,7 +25,7 @@ def fetch_image():
         res = requests.get(url)
         img = Image.open(BytesIO(res.content))
         return img
-    except UnidentifiedImageError:
+    except:
         return None
 
 # --- Generate wallpaper ---
@@ -37,35 +37,26 @@ def generate_wallpaper(quote_text):
 
     bg = bg.convert("RGB")
     W, H = bg.size
-    draw = ImageDraw.Draw(bg)
 
-    # Overlay for readability
+    # Add transparent overlay for contrast
     overlay = Image.new('RGBA', bg.size, (0, 0, 0, 120))
     bg = Image.alpha_composite(bg.convert("RGBA"), overlay).convert("RGB")
     draw = ImageDraw.Draw(bg)
 
-    # Use default font with fallback size
-    font = ImageFont.load_default()
-    max_font_size = 60
-    font_size = max_font_size
+    # Use scalable built-in font
+    font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+    font_size = 48
+    font = ImageFont.truetype(font_path, font_size)
 
-    # Use fallback estimate if getsize isn't available
-    def get_text_size(text, font):
-        try:
-            return font.getsize(text)
-        except:
-            avg_char_width = font_size * 0.6
-            return int(len(text) * avg_char_width), font_size
-
-    # Wrap text based on width
-    wrap_width = int(W / (font_size * 0.6))
-    lines = textwrap.wrap(quote_text, width=wrap_width)
+    # Wrap text based on image width
+    max_chars_per_line = int(W / (font_size * 0.6))
+    lines = textwrap.wrap(quote_text, width=max_chars_per_line)
     total_text_height = len(lines) * (font_size + 10)
 
-    # Center text vertically
     y = (H - total_text_height) // 2
+
     for line in lines:
-        w, h = get_text_size(line, font)
+        w, h = font.getsize(line)
         x = (W - w) // 2
         draw.text((x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
         y += font_size + 10
@@ -83,11 +74,9 @@ if st.button("✨ Generate Wallpaper"):
 
             buf = BytesIO()
             wallpaper.save(buf, format="JPEG")
-            byte_im = buf.getvalue()
-
             st.download_button(
                 label="📥 Download Wallpaper",
-                data=byte_im,
+                data=buf.getvalue(),
                 file_name="motivational_wallpaper.jpg",
                 mime="image/jpeg"
             )
