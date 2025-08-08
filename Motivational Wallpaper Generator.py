@@ -3,7 +3,6 @@ import requests
 from PIL import Image, ImageDraw, ImageFont, UnidentifiedImageError
 from io import BytesIO
 import textwrap
-import os
 
 st.set_page_config(page_title="Motivational Wallpaper Generator", page_icon="🌄")
 st.title("🌄 Motivational Wallpaper Generator")
@@ -40,19 +39,19 @@ def generate_wallpaper(quote_text):
     W, H = bg.size
     draw = ImageDraw.Draw(bg)
 
-    # Add overlay for readability
+    # Overlay for readability
     overlay = Image.new('RGBA', bg.size, (0, 0, 0, 130))
     bg = Image.alpha_composite(bg.convert("RGBA"), overlay).convert("RGB")
     draw = ImageDraw.Draw(bg)
 
-    # Try loading stylish font
+    # Try custom font
     try:
-        font_path = "Lobster-Regular.ttf"
-        font = ImageFont.truetype(font_path, 44)
-    except:
-        font = ImageFont.truetype("arial.ttf", 40)
+        font = ImageFont.truetype("Lobster-Regular.ttf", 44)
+    except OSError:
+        font = ImageFont.load_default()
+        st.warning("⚠️ Custom font not found. Using default font.")
 
-    # Wrap and position text
+    # Wrap and draw text
     wrapped = textwrap.wrap(quote_text, width=35)
     line_height = 55
     total_height = len(wrapped) * line_height
