@@ -36,7 +36,7 @@ else:
     st.write(f"📅 Date: `{apod.get('date', 'N/A')}`")
 
     if apod.get("media_type") == "image":
-        st.image(apod.get("url"), caption="📸 Credit: " + apod.get("copyright", "NASA"), use_column_width=True)
+        st.image(apod.get("url"), caption="📸 Credit: " + apod.get("copyright", "NASA"), use_container_width=True)
     elif apod.get("media_type") == "video":
         st.video(apod.get("url"))
     else:
