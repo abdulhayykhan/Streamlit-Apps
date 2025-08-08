@@ -60,9 +60,4 @@ if generate and query:
 
 # --- Footer ---
 st.markdown("---")
-st.markdown(
-    "<div style='text-align: center; font-size: 14px;'>"
-    "Made with ❤️ by Abdul Hayy Khan | Powered by Unsplash API | Built using Streamlit"
-    "</div>",
-    unsafe_allow_html=True
-)
+st.markdown("Made with ❤️ by Abdul Hayy Khan using Streamlit + Unsplash API")
