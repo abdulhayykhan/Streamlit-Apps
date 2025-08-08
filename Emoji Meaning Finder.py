@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # --- Get All Emoji Data from API ---
-@st.cache_data(ttl=86400)  # Cache for 1 day to reduce API load
+@st.cache_data(ttl=86400)  # Cache data for 1 day
 def fetch_all_emojis():
     try:
         res = requests.get("https://emojihub.yurace.pro/api/all")
@@ -48,10 +48,13 @@ if user_emoji:
     else:
         st.warning("Emoji not found in database 😔")
 
-# --- Optional: Display all emojis ---
+# --- Optional: Display sample emojis ---
 with st.expander("📚 View Some Available Emojis"):
-    sample = [emoji["unicode"] for emoji in emoji_data[:30]]
-    st.write(" ".join(sample))
+    sample = [emoji["unicode"] for emoji in emoji_data[:30] if "unicode" in emoji and emoji["unicode"]]
+    if sample:
+        st.write(" ".join(sample))
+    else:
+        st.info("No sample emojis to show.")
 
 # --- Footer ---
 st.markdown("---")
