@@ -9,7 +9,7 @@ UNSPLASH_ACCESS_KEY = "OXzfR4GnNkUzaFbPpwVIfTVLdNwAg2c73GuwueB6ick"
 # --- Streamlit UI ---
 st.set_page_config(page_title="HD Wallpaper Generator", page_icon="🌄", layout="wide")
 st.title("🖼️ HD Wallpaper Generator")
-st.markdown("Generate stunning HD wallpapers based on your interests. No quotes, just pure visuals!")
+st.markdown("Generate stunning HD wallpapers based on your interests.")
 
 # --- Popular Categories ---
 popular_categories = [
