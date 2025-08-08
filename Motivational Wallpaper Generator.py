@@ -6,7 +6,7 @@ import textwrap
 
 st.set_page_config(page_title="Motivational Wallpaper Generator", page_icon="🌄")
 st.title("🌄 Motivational Wallpaper Generator")
-st.write("Click below to generate a random motivational wallpaper!")
+st.write("Click below to generate a beautiful motivational wallpaper!")
 
 # --- Fetch motivational quote ---
 def fetch_quote():
@@ -18,7 +18,7 @@ def fetch_quote():
     except:
         return "Stay positive, work hard, and make it happen!"
 
-# --- Fetch random image from safe source ---
+# --- Fetch image ---
 def fetch_image():
     url = "https://picsum.photos/800/600"
     try:
@@ -28,7 +28,7 @@ def fetch_image():
     except UnidentifiedImageError:
         return None
 
-# --- Generate final wallpaper image ---
+# --- Generate wallpaper ---
 def generate_wallpaper(quote_text):
     bg = fetch_image()
     if bg is None:
@@ -36,29 +36,37 @@ def generate_wallpaper(quote_text):
         return None
 
     bg = bg.convert("RGB")
+    W, H = bg.size
     draw = ImageDraw.Draw(bg)
 
+    # Add semi-transparent overlay for better readability
+    overlay = Image.new('RGBA', bg.size, (0, 0, 0, 120))
+    bg = Image.alpha_composite(bg.convert("RGBA"), overlay).convert("RGB")
+    draw = ImageDraw.Draw(bg)
+
+    # Load font
     try:
-        font = ImageFont.truetype("arial.ttf", 28)
+        font = ImageFont.truetype("arial.ttf", 30)
     except:
         font = ImageFont.load_default()
 
+    # Wrap text
     wrapped = textwrap.wrap(quote_text, width=40)
-    W, H = bg.size
-    text_height = len(wrapped) * 35
-    y_text = (H - text_height) // 2
+    line_height = 40
+    total_height = len(wrapped) * line_height
+    y_text = (H - total_height) // 2
 
+    # Draw each line centered
     for line in wrapped:
-        # Use textbbox instead of textsize
         bbox = draw.textbbox((0, 0), line, font=font)
         w = bbox[2] - bbox[0]
-        h = bbox[3] - bbox[1]
-        draw.text(((W - w) / 2, y_text), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
-        y_text += 35
+        x = (W - w) // 2
+        draw.text((x, y_text), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
+        y_text += line_height
 
     return bg
 
-# --- Generate Wallpaper Button ---
+# --- UI ---
 if st.button("✨ Generate Wallpaper"):
     with st.spinner("Generating..."):
         quote = fetch_quote()
