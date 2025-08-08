@@ -3,6 +3,7 @@ import requests
 from PIL import Image, ImageDraw, ImageFont, UnidentifiedImageError
 from io import BytesIO
 import textwrap
+import os
 
 st.set_page_config(page_title="Motivational Wallpaper Generator", page_icon="🌄")
 st.title("🌄 Motivational Wallpaper Generator")
@@ -39,24 +40,24 @@ def generate_wallpaper(quote_text):
     W, H = bg.size
     draw = ImageDraw.Draw(bg)
 
-    # Add semi-transparent overlay for better readability
-    overlay = Image.new('RGBA', bg.size, (0, 0, 0, 120))
+    # Add overlay for readability
+    overlay = Image.new('RGBA', bg.size, (0, 0, 0, 130))
     bg = Image.alpha_composite(bg.convert("RGBA"), overlay).convert("RGB")
     draw = ImageDraw.Draw(bg)
 
-    # Load font
+    # Try loading stylish font
     try:
-        font = ImageFont.truetype("arial.ttf", 30)
+        font_path = "Lobster-Regular.ttf"
+        font = ImageFont.truetype(font_path, 44)
     except:
-        font = ImageFont.load_default()
+        font = ImageFont.truetype("arial.ttf", 40)
 
-    # Wrap text
-    wrapped = textwrap.wrap(quote_text, width=40)
-    line_height = 40
+    # Wrap and position text
+    wrapped = textwrap.wrap(quote_text, width=35)
+    line_height = 55
     total_height = len(wrapped) * line_height
     y_text = (H - total_height) // 2
 
-    # Draw each line centered
     for line in wrapped:
         bbox = draw.textbbox((0, 0), line, font=font)
         w = bbox[2] - bbox[0]
