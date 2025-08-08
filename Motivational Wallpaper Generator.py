@@ -18,9 +18,8 @@ def fetch_quote():
     except:
         return "Stay positive, work hard, and make it happen!"
 
-# --- Fetch random image from Unsplash ---
+# --- Fetch random image from safe source ---
 def fetch_image():
-    # Safer fallback image URL
     url = "https://picsum.photos/800/600"
     try:
         res = requests.get(url)
@@ -50,7 +49,10 @@ def generate_wallpaper(quote_text):
     y_text = (H - text_height) // 2
 
     for line in wrapped:
-        w, h = draw.textsize(line, font=font)
+        # Use textbbox instead of textsize
+        bbox = draw.textbbox((0, 0), line, font=font)
+        w = bbox[2] - bbox[0]
+        h = bbox[3] - bbox[1]
         draw.text(((W - w) / 2, y_text), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
         y_text += 35
 
