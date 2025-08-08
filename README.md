@@ -28,6 +28,26 @@ This repository contains various **Streamlit** applications built for interactiv
 
 ---
 
+### 3. NASA Astronomy Picture of the Day 🌌
+
+- Displays the daily space photo using **NASA’s APOD (Astronomy Picture of the Day) API**.
+- Includes image, description, and date with an intuitive layout.
+- Built with **Python, Streamlit, and NASA API Integration**.
+
+[🔗 View App](https://nasa-astronomy-picture-of-the-day-ahk.streamlit.app/)  
+
+---
+
+### 4. HD Wallpaper Generator 🖼️
+
+- Generates stunning high-resolution wallpapers based on your selected category or keyword.
+- Fetches images from **Unsplash API** with a smooth and minimal user experience.
+- Built with **Python, Streamlit, and API Integration**.
+
+[🔗 View App](https://hd-wallpaper-generator-ahk.streamlit.app/)  
+
+---
+
 🔹 *More projects coming soon...*
 
 ---
