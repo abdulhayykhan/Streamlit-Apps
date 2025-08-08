@@ -44,29 +44,31 @@ def generate_wallpaper(quote_text):
     bg = Image.alpha_composite(bg.convert("RGBA"), overlay).convert("RGB")
     draw = ImageDraw.Draw(bg)
 
-    # Use default font with larger size
+    # Use default font with fallback size
+    font = ImageFont.load_default()
     max_font_size = 60
-    min_font_size = 20
     font_size = max_font_size
 
-    # Try fitting the text within the image width
-    wrapped = []
-    while font_size >= min_font_size:
-        font = ImageFont.load_default()
-        test_draw = ImageDraw.Draw(Image.new("RGB", (W, H)))
-        wrapped = textwrap.wrap(quote_text, width=int(W / (font_size * 0.6)))
-        total_height = len(wrapped) * (font_size + 10)
-        if total_height <= H * 0.9:  # Allow a little margin
-            break
-        font_size -= 2
+    # Use fallback estimate if getsize isn't available
+    def get_text_size(text, font):
+        try:
+            return font.getsize(text)
+        except:
+            avg_char_width = font_size * 0.6
+            return int(len(text) * avg_char_width), font_size
 
-    # Draw text centered
-    y_text = (H - total_height) // 2
-    for line in wrapped:
-        w, h = test_draw.textsize(line, font=font)
+    # Wrap text based on width
+    wrap_width = int(W / (font_size * 0.6))
+    lines = textwrap.wrap(quote_text, width=wrap_width)
+    total_text_height = len(lines) * (font_size + 10)
+
+    # Center text vertically
+    y = (H - total_text_height) // 2
+    for line in lines:
+        w, h = get_text_size(line, font)
         x = (W - w) // 2
-        draw.text((x, y_text), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
-        y_text += font_size + 10
+        draw.text((x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
+        y += font_size + 10
 
     return bg
 
@@ -85,7 +87,3 @@ if st.button("✨ Generate Wallpaper"):
 
             st.download_button(
                 label="📥 Download Wallpaper",
-                data=byte_im,
-                file_name="motivational_wallpaper.jpg",
-                mime="image/jpeg"
-            )
