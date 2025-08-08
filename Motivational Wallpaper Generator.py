@@ -87,3 +87,7 @@ if st.button("✨ Generate Wallpaper"):
 
             st.download_button(
                 label="📥 Download Wallpaper",
+                data=byte_im,
+                file_name="motivational_wallpaper.jpg",
+                mime="image/jpeg"
+            )
