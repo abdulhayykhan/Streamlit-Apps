@@ -40,29 +40,33 @@ def generate_wallpaper(quote_text):
     draw = ImageDraw.Draw(bg)
 
     # Overlay for readability
-    overlay = Image.new('RGBA', bg.size, (0, 0, 0, 130))
+    overlay = Image.new('RGBA', bg.size, (0, 0, 0, 120))
     bg = Image.alpha_composite(bg.convert("RGBA"), overlay).convert("RGB")
     draw = ImageDraw.Draw(bg)
 
-    # Try custom font
-    try:
-        font = ImageFont.truetype("Lobster-Regular.ttf", 44)
-    except OSError:
+    # Use default font with larger size
+    max_font_size = 60
+    min_font_size = 20
+    font_size = max_font_size
+
+    # Try fitting the text within the image width
+    wrapped = []
+    while font_size >= min_font_size:
         font = ImageFont.load_default()
-        st.warning("⚠️ Custom font not found. Using default font.")
+        test_draw = ImageDraw.Draw(Image.new("RGB", (W, H)))
+        wrapped = textwrap.wrap(quote_text, width=int(W / (font_size * 0.6)))
+        total_height = len(wrapped) * (font_size + 10)
+        if total_height <= H * 0.9:  # Allow a little margin
+            break
+        font_size -= 2
 
-    # Wrap and draw text
-    wrapped = textwrap.wrap(quote_text, width=35)
-    line_height = 55
-    total_height = len(wrapped) * line_height
+    # Draw text centered
     y_text = (H - total_height) // 2
-
     for line in wrapped:
-        bbox = draw.textbbox((0, 0), line, font=font)
-        w = bbox[2] - bbox[0]
+        w, h = test_draw.textsize(line, font=font)
         x = (W - w) // 2
         draw.text((x, y_text), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
-        y_text += line_height
+        y_text += font_size + 10
 
     return bg
 
@@ -73,7 +77,7 @@ if st.button("✨ Generate Wallpaper"):
         wallpaper = generate_wallpaper(quote)
 
         if wallpaper:
-            st.image(wallpaper, caption="🌟 Your Motivational Wallpaper", use_container_width=True)
+            st.image(wallpaper, caption="🌟 Your Motivational Wallpaper", use_column_width=True)
 
             buf = BytesIO()
             wallpaper.save(buf, format="JPEG")
