@@ -42,7 +42,7 @@ if generate and query:
     with st.spinner("Fetching a beautiful wallpaper..."):
         try:
             image, image_url = fetch_hd_wallpaper(query)
-            st.image(image, caption=f"Wallpaper for: {query}", use_column_width=True)
+            st.image(image, caption=f"Wallpaper for: {query}", use_container_width=True)
             st.success("HD Wallpaper generated successfully!")
 
             # Download button
