@@ -48,13 +48,14 @@ if user_emoji:
     else:
         st.warning("Emoji not found in database 😔")
 
-# --- Optional: Display sample emojis ---
+# --- Optional: Display sample emojis safely ---
 with st.expander("📚 View Some Available Emojis"):
-    sample = [emoji["unicode"] for emoji in emoji_data[:30] if "unicode" in emoji and emoji["unicode"]]
+    # Strict filtering for non-null, string unicode values
+    sample = [str(emoji["unicode"]) for emoji in emoji_data[:50] if "unicode" in emoji and isinstance(emoji["unicode"], str)]
     if sample:
-        st.write(" ".join(sample))
+        st.text(" ".join(sample))
     else:
-        st.info("No sample emojis to show.")
+        st.info("No valid sample emojis to display.")
 
 # --- Footer ---
 st.markdown("---")
