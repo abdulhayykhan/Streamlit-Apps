@@ -4,8 +4,8 @@ from deep_translator import GoogleTranslator
 from gtts import gTTS
 import tempfile
 
-st.title("🩺 Healthcare Translation Web App (Free Version)")
-st.write("Translate patient-provider conversations with free APIs.")
+st.title("🩺 Healthcare Translation Web App")
+st.write("Translate patient-provider conversations in real-time with multilingual support.")
 
 # Map full names to language codes
 languages = {
