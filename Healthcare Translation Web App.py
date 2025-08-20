@@ -161,6 +161,20 @@ if st.button("🔊 Speak Latest Translation"):
         st.info("No translated text yet.")
 
 # -----------------------
+# Download transcripts
+# -----------------------
+if st.session_state.orig_buffer or st.session_state.tran_buffer:
+    transcript_text = "Original Transcript:\n" + "\n".join(st.session_state.orig_buffer) + "\n\n"
+    transcript_text += "Translated Transcript:\n" + "\n".join(st.session_state.tran_buffer)
+
+    st.download_button(
+        label="📥 Download Transcript",
+        data=transcript_text,
+        file_name="transcript.txt",
+        mime="text/plain"
+    )
+
+# -----------------------
 # Clear transcripts
 # -----------------------
 st.divider()
