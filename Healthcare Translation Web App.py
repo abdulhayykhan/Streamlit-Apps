@@ -51,8 +51,9 @@ if audio_file:
             st.subheader("🌍 Translated Transcript")
             st.text_area("Translation", translated_text, height=100)
 
-            # Text-to-Speech
-            tts = gTTS(translated_text, lang=output_lang)
-            tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-            tts.save(tmp_file.name)
-            st.audio(tmp_file.name, format="audio/mp3")
+            # Add Speak button
+            if st.button("🔊 Speak Translation"):
+                tts = gTTS(translated_text, lang=output_lang)
+                tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+                tts.save(tmp_file.name)
+                st.audio(tmp_file.name, format="audio/mp3")
