@@ -11,14 +11,14 @@ st.title("🩺 Healthcare Translation Web App")
 st.caption("Real-time multilingual interpretation for patients and healthcare providers.")
 
 # -----------------------
-# Language map
+# Supported Languages (fixed for deep-translator)
 # -----------------------
 LANGUAGES = {
     "English": "en",
     "Spanish": "es",
     "French": "fr",
     "German": "de",
-    "Chinese (Simplified)": "zh-cn",
+    "Chinese (Simplified)": "zh-CN",   # ✅ fixed
     "Arabic": "ar",
     "Hindi": "hi",
     "Urdu": "ur"
