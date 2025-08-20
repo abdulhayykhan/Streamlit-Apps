@@ -2,4 +2,4 @@ streamlit
 speechrecognition
 deep-translator
 gTTS
-st-mic-recorder
+streamlit-audiorecorder
