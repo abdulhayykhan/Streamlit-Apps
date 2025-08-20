@@ -1,5 +1,5 @@
 streamlit
-streamlit-mic-recorder
 speechrecognition
 deep-translator
 gTTS
+st-mic-recorder
