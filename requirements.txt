@@ -3,3 +3,4 @@ speechrecognition
 deep-translator
 gTTS
 streamlit-audiorecorder
+pydub
