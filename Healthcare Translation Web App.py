@@ -57,10 +57,16 @@ langs = {
     "Spanish": "es",
     "French": "fr",
     "German": "de",
-    "Chinese (Simplified)": "zh-cn",
+    "Chinese (Simplified)": "zh-CN",
+    "Chinese (Traditional)": "zh-TW",
     "Arabic": "ar",
     "Hindi": "hi",
-    "Urdu": "ur"
+    "Urdu": "ur",
+    "Japanese": "ja",
+    "Korean": "ko",
+    "Russian": "ru",
+    "Portuguese": "pt",
+    "Italian": "it"
 }
 
 input_lang_name = st.selectbox("🎤 Input Language", list(langs.keys()))
