@@ -55,8 +55,8 @@ class AudioProcessor(AudioProcessorBase):
         return frame
 
 webrtc_streamer(
-    key="mic", 
-    mode="recvonly", 
+    key="mic",
+    mode="recvonly",   
     audio_processor_factory=AudioProcessor,
     rtc_configuration=rtc_config,
     media_stream_constraints={"audio": True, "video": False},
