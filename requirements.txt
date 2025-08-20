@@ -3,3 +3,4 @@ speechrecognition
 pydub
 gtts
 deep-translator
+streamlit-webrtc
