@@ -1,6 +1,6 @@
 import streamlit as st
 import speech_recognition as sr
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 from gtts import gTTS
 import tempfile
 
@@ -32,9 +32,7 @@ if audio_file:
     if original_text:
         if st.button("Translate"):
             st.info("Translating...")
-            translator = Translator()
-            result = translator.translate(original_text, src=input_lang, dest=output_lang)
-            translated_text = result.text
+            translated_text = GoogleTranslator(source=input_lang, target=output_lang).translate(original_text)
             st.subheader("🌍 Translated Transcript")
             st.text_area("Translation", translated_text, height=100)
 
