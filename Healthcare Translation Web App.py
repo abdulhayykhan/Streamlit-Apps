@@ -144,4 +144,4 @@ if st.session_state.orig_buffer or st.session_state.tran_buffer:
 if st.button("🧹 Clear Transcripts"):
     st.session_state.orig_buffer = []
     st.session_state.tran_buffer = []
-    st.experimental_rerun()
+    st.rerun()
