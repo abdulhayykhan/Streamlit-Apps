@@ -4,6 +4,7 @@ import speech_recognition as sr
 from deep_translator import GoogleTranslator
 from gtts import gTTS
 import tempfile
+from io import BytesIO
 
 st.set_page_config(page_title="Healthcare Translation Web App", layout="wide")
 st.title("🩺 Healthcare Translation Web App")
@@ -94,10 +95,14 @@ st.caption("Click **Record**, speak, then **Stop** to add a segment to transcrip
 audio = audiorecorder("🎙️ Record", "⏹️ Stop")
 
 if len(audio) > 0:
-    # Save to temp wav
+    # Play audio
+    buf = BytesIO()
+    audio.export(buf, format="wav")
+    st.audio(buf.getvalue(), format="audio/wav")
+
+    # Save temp file for SpeechRecognition
     wav_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
     audio.export(wav_file.name, format="wav")
-    st.audio(audio.tobytes(), format="audio/wav")
 
     # Transcribe
     text = transcribe_wav_file(wav_file.name, input_lang)
