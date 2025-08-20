@@ -48,6 +48,16 @@ This repository contains various **Streamlit** applications built for interactiv
 
 ---
 
+### 5. Healthcare Translation Web App 🩺
+
+- Enables **real-time multilingual communication** between patients and healthcare providers with live transcription and translation.
+- Supports **speech-to-text, text translation, and audio playback** in multiple international languages.
+- Built with **Python**, **Streamlit**, **SpeechRecognition**, **gTTS**, and **deep-translator**, deployed for easy access.
+
+[🔗 View App](https://healthcare-translation-ahk.streamlit.app/)  
+
+---
+
 🔹 *More projects coming soon...*
 
 ---
