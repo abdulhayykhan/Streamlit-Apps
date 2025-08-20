@@ -7,9 +7,24 @@ import tempfile
 st.title("🩺 Healthcare Translation Web App (Free Version)")
 st.write("Translate patient-provider conversations with free APIs.")
 
-# Language options
-input_lang = st.selectbox("Select Input Language:", ["en", "es", "fr", "ur"])
-output_lang = st.selectbox("Select Output Language:", ["en", "es", "fr", "ur"])
+# Map full names to language codes
+languages = {
+    "English": "en",
+    "Spanish": "es",
+    "French": "fr",
+    "German": "de",
+    "Chinese (Simplified)": "zh-cn",
+    "Arabic": "ar",
+    "Hindi": "hi",
+    "Urdu": "ur"
+}
+
+# Language selectors
+input_lang_name = st.selectbox("Select Input Language:", list(languages.keys()))
+output_lang_name = st.selectbox("Select Output Language:", list(languages.keys()))
+
+input_lang = languages[input_lang_name]
+output_lang = languages[output_lang_name]
 
 # File upload
 audio_file = st.file_uploader("🎤 Upload an audio file", type=["wav", "mp3"])
