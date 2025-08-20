@@ -3,11 +3,14 @@ import speech_recognition as sr
 from deep_translator import GoogleTranslator
 from gtts import gTTS
 import tempfile
+from streamlit_webrtc import webrtc_streamer, AudioProcessorBase, RTCConfiguration
+
+st.set_page_config(page_title="Healthcare Translation Web App", layout="wide")
 
 st.title("🩺 Healthcare Translation Web App")
-st.write("Translate patient-provider conversations in real-time with multilingual support.")
+st.write("Real-time multilingual translation for patients and healthcare providers.")
 
-# Map full names to language codes
+# Language options
 languages = {
     "English": "en",
     "Spanish": "es",
@@ -19,41 +22,68 @@ languages = {
     "Urdu": "ur"
 }
 
-# Language selectors
 input_lang_name = st.selectbox("Select Input Language:", list(languages.keys()))
 output_lang_name = st.selectbox("Select Output Language:", list(languages.keys()))
 
 input_lang = languages[input_lang_name]
 output_lang = languages[output_lang_name]
 
-# File upload
-audio_file = st.file_uploader("🎤 Upload an audio file", type=["wav", "mp3"])
+col1, col2 = st.columns(2)
+col1.subheader("🎤 Original Transcript")
+col2.subheader("🌍 Translated Transcript")
 
-original_text = ""
-translated_text = ""
+# Shared variables
+st.session_state["original_text"] = ""
+st.session_state["translated_text"] = ""
+
+# 📌 Microphone Live Transcription
+rtc_config = RTCConfiguration({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
+
+class AudioProcessor(AudioProcessorBase):
+    def __init__(self):
+        self.recognizer = sr.Recognizer()
+
+    def recv(self, frame):
+        audio_data = frame.to_ndarray().astype("int16")
+        audio = sr.AudioData(audio_data.tobytes(), frame.sample_rate, 2)
+        try:
+            text = self.recognizer.recognize_google(audio, language=input_lang)
+            st.session_state["original_text"] = text
+            st.session_state["translated_text"] = GoogleTranslator(source=input_lang, target=output_lang).translate(text)
+        except:
+            pass
+        return frame
+
+webrtc_streamer(
+    key="mic", 
+    mode="recvonly", 
+    audio_processor_factory=AudioProcessor,
+    rtc_configuration=rtc_config,
+    media_stream_constraints={"audio": True, "video": False},
+)
+
+# Display transcripts (auto-updating)
+col1.text_area("Input", st.session_state.get("original_text", ""), height=200)
+col2.text_area("Translation", st.session_state.get("translated_text", ""), height=200)
+
+# 📂 File Upload (alternative input)
+st.header("Or Upload an Audio File")
+audio_file = st.file_uploader("Upload .wav or .mp3", type=["wav", "mp3"])
 
 if audio_file:
     recognizer = sr.Recognizer()
     with sr.AudioFile(audio_file) as source:
         audio_data = recognizer.record(source)
         try:
-            st.info("Transcribing...")
             original_text = recognizer.recognize_google(audio_data, language=input_lang)
-            st.subheader("📝 Original Transcript")
-            st.text_area("Transcript", original_text, height=100)
-        except:
-            st.error("Speech recognition failed. Try another file or language.")
-
-    if original_text:
-        if st.button("Translate"):
-            st.info("Translating...")
             translated_text = GoogleTranslator(source=input_lang, target=output_lang).translate(original_text)
-            st.subheader("🌍 Translated Transcript")
-            st.text_area("Translation", translated_text, height=100)
+            col1.text_area("Uploaded Transcript", original_text, height=100)
+            col2.text_area("Uploaded Translation", translated_text, height=100)
 
-            # Add Speak button
-            if st.button("🔊 Speak Translation"):
+            if st.button("🔊 Speak Uploaded Translation"):
                 tts = gTTS(translated_text, lang=output_lang)
                 tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
                 tts.save(tmp_file.name)
                 st.audio(tmp_file.name, format="audio/mp3")
+        except:
+            st.error("Could not process audio file.")
