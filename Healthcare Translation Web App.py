@@ -1,5 +1,5 @@
 import streamlit as st
-from st_mic_recorder import mic_recorder
+from audiorecorder import audiorecorder
 import speech_recognition as sr
 from deep_translator import GoogleTranslator
 from gtts import gTTS
