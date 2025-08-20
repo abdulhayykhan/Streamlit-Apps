@@ -89,26 +89,32 @@ st.divider()
 # -----------------------
 # Microphone section
 # -----------------------
-st.subheader("Microphone")
-st.caption("Click **Start Recording**, speak, then **Stop Recording** to append a segment to the live transcript.")
+from audiorecorder import audiorecorder
 
-audio_dict = mic_recorder(
-    start_prompt="Start Recording",
-    stop_prompt="Stop Recording",
-    just_once=False,               # allow multiple recordings in one session
-    use_container_width=True,
-    format="wav"                   # returns bytes in WAV
-)
+st.subheader("🎤 Microphone Recording")
 
-if audio_dict and audio_dict.get("bytes"):
-    st.audio(audio_dict["bytes"], format="audio/wav")
-    with st.status("Processing microphone audio...", expanded=False):
-        text = transcribe_wav_bytes(audio_dict["bytes"], input_lang)
-        if text:
-            append_segments(text)
-            st.success("Segment transcribed" + (" & translated." if auto_translate else "."))
-        else:
-            st.warning("Could not understand the audio. Try speaking clearly or check language selection.")
+audio = audiorecorder("Click to record", "Click to stop")
+
+if len(audio) > 0:
+    # Play recorded audio
+    st.audio(audio.tobytes(), format="audio/wav")
+
+    # Save temp file
+    wav_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+    audio.export(wav_file.name, format="wav")
+
+    # Transcribe
+    recognizer = sr.Recognizer()
+    with sr.AudioFile(wav_file.name) as source:
+        audio_data = recognizer.record(source)
+        try:
+            text = recognizer.recognize_google(audio_data, language=input_lang)
+            st.session_state.orig_buffer.append(text)
+            translated = GoogleTranslator(source=input_lang, target=output_lang).translate(text)
+            st.session_state.tran_buffer.append(translated)
+            st.success("Audio transcribed & translated.")
+        except:
+            st.error("Could not transcribe audio.")
 
 # -----------------------
 # File upload (optional)
