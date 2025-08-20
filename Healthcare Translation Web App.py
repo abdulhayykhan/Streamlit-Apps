@@ -4,14 +4,13 @@ import speech_recognition as sr
 from deep_translator import GoogleTranslator
 from gtts import gTTS
 import tempfile
-import time
 
 st.set_page_config(page_title="Healthcare Translation Web App", layout="wide")
 st.title("🩺 Healthcare Translation Web App")
 st.caption("Real-time multilingual interpretation for patients and healthcare providers.")
 
 # -----------------------
-# Language map (expandable)
+# Language map
 # -----------------------
 LANGUAGES = {
     "English": "en",
@@ -39,11 +38,11 @@ output_lang = LANGUAGES[output_lang_name]
 # Session state buffers
 # -----------------------
 if "orig_buffer" not in st.session_state:
-    st.session_state.orig_buffer = []  # list of original transcript segments
+    st.session_state.orig_buffer = []
 if "tran_buffer" not in st.session_state:
-    st.session_state.tran_buffer = []  # list of translated transcript segments
-if "last_translated_text" not in st.session_state:
-    st.session_state.last_translated_text = ""
+    st.session_state.tran_buffer = []
+if "last_audio_path" not in st.session_state:
+    st.session_state.last_audio_path = None
 
 def append_segments(orig_text: str):
     """Append original + translated segments to buffers."""
@@ -53,20 +52,14 @@ def append_segments(orig_text: str):
 
     st.session_state.orig_buffer.append(orig_text)
 
-    # Translate immediately if toggle is on
     if auto_translate:
         translated = GoogleTranslator(source=input_lang, target=output_lang).translate(orig_text)
         st.session_state.tran_buffer.append(translated)
-        st.session_state.last_translated_text = translated
 
-def transcribe_wav_bytes(wav_bytes: bytes, lang: str) -> str:
-    """Transcribe WAV/MP3 bytes using Google Speech Recognition via speech_recognition."""
+def transcribe_wav_file(filepath: str, lang: str) -> str:
+    """Transcribe audio file using Google Speech Recognition."""
     r = sr.Recognizer()
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-        tmp.write(wav_bytes)
-        tmp.flush()
-        tmp_path = tmp.name
-    with sr.AudioFile(tmp_path) as source:
+    with sr.AudioFile(filepath) as source:
         audio = r.record(source)
     try:
         return r.recognize_google(audio, language=lang)
@@ -74,47 +67,45 @@ def transcribe_wav_bytes(wav_bytes: bytes, lang: str) -> str:
         return ""
 
 # -----------------------
-# Layout: transcripts side-by-side
+# Layout: transcripts side-by-side (READ-ONLY)
 # -----------------------
 left, right = st.columns(2)
 with left:
     st.subheader("🎤 Original Transcript")
-    st.text_area("Live Input", value="\n".join(st.session_state.orig_buffer), height=260, key="orig_textarea")
+    if st.session_state.orig_buffer:
+        st.code("\n".join(st.session_state.orig_buffer), language="")
+    else:
+        st.info("No transcript yet.")
 with right:
     st.subheader("🌍 Translated Transcript")
-    st.text_area("Live Output", value="\n".join(st.session_state.tran_buffer), height=260, key="tran_textarea")
+    if st.session_state.tran_buffer:
+        st.code("\n".join(st.session_state.tran_buffer), language="")
+    else:
+        st.info("No translation yet.")
 
 st.divider()
 
 # -----------------------
 # Microphone section
 # -----------------------
-from audiorecorder import audiorecorder
+st.subheader("Microphone Recording")
+st.caption("Click **Record**, speak, then **Stop** to add a segment to transcripts.")
 
-st.subheader("🎤 Microphone Recording")
-
-audio = audiorecorder("Click to record", "Click to stop")
+audio = audiorecorder("🎙️ Record", "⏹️ Stop")
 
 if len(audio) > 0:
-    # Play recorded audio
-    st.audio(audio.tobytes(), format="audio/wav")
-
-    # Save temp file
+    # Save to temp wav
     wav_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
     audio.export(wav_file.name, format="wav")
+    st.audio(audio.tobytes(), format="audio/wav")
 
     # Transcribe
-    recognizer = sr.Recognizer()
-    with sr.AudioFile(wav_file.name) as source:
-        audio_data = recognizer.record(source)
-        try:
-            text = recognizer.recognize_google(audio_data, language=input_lang)
-            st.session_state.orig_buffer.append(text)
-            translated = GoogleTranslator(source=input_lang, target=output_lang).translate(text)
-            st.session_state.tran_buffer.append(translated)
-            st.success("Audio transcribed & translated.")
-        except:
-            st.error("Could not transcribe audio.")
+    text = transcribe_wav_file(wav_file.name, input_lang)
+    if text:
+        append_segments(text)
+        st.success("Audio transcribed" + (" & translated." if auto_translate else "."))
+    else:
+        st.warning("Could not transcribe audio.")
 
 # -----------------------
 # File upload (optional)
@@ -122,64 +113,54 @@ if len(audio) > 0:
 st.subheader("Upload Audio")
 uploaded = st.file_uploader("Upload .wav or .mp3", type=["wav", "mp3"])
 if uploaded:
-    st.audio(uploaded, format=f"audio/{uploaded.type.split('/')[-1]}")
-    with st.status("Transcribing uploaded audio...", expanded=False):
-        text = transcribe_wav_bytes(uploaded.read(), input_lang)
-        if text:
-            append_segments(text)
-            st.success("File transcribed" + (" & translated." if auto_translate else "."))
-        else:
-            st.warning("Could not process the uploaded audio.")
+    st.audio(uploaded, format="audio/wav")
+    with tempfile.NamedTemporaryFile(delete=False, suffix=f".{uploaded.type.split('/')[-1]}") as tmp:
+        tmp.write(uploaded.read())
+        tmp.flush()
+        filepath = tmp.name
+
+    text = transcribe_wav_file(filepath, input_lang)
+    if text:
+        append_segments(text)
+        st.success("File transcribed" + (" & translated." if auto_translate else "."))
+    else:
+        st.warning("Could not process uploaded file.")
 
 # -----------------------
-# Manual translate box (optional typing)
+# Manual text translation
 # -----------------------
-st.subheader("Manual Text (optional)")
-manual_text = st.text_area(f"Type {input_lang_name} text to translate", height=120, placeholder="Type here…")
-c1, c2 = st.columns([1,3])
-with c1:
-    if st.button("Translate Text"):
-        if manual_text.strip():
-            translated = GoogleTranslator(source=input_lang, target=output_lang).translate(manual_text.strip())
-            st.session_state.orig_buffer.append(manual_text.strip())
-            st.session_state.tran_buffer.append(translated)
-            st.session_state.last_translated_text = translated
-            st.success("Text translated and appended.")
-        else:
-            st.info("Please enter some text.")
+st.subheader("Manual Text (Optional)")
+manual_text = st.text_area(f"Type {input_lang_name} text to translate", height=100, placeholder="Type here…")
+if st.button("Translate Text"):
+    if manual_text.strip():
+        translated = GoogleTranslator(source=input_lang, target=output_lang).translate(manual_text.strip())
+        st.session_state.orig_buffer.append(manual_text.strip())
+        st.session_state.tran_buffer.append(translated)
+        st.success("Text translated and appended.")
+    else:
+        st.info("Please enter some text.")
 
 # -----------------------
 # Speak button for latest translation
 # -----------------------
 st.subheader("Audio Playback")
-speak_col1, speak_col2 = st.columns([1, 4])
-with speak_col1:
-    if st.button("🔊 Speak Latest Translation"):
-        if st.session_state.tran_buffer:
-            to_speak = st.session_state.tran_buffer[-1]
-            with st.spinner("Generating audio…"):
-                tts = gTTS(to_speak, lang=output_lang)
-                tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-                tts.save(tmp.name)
-                st.session_state.last_audio_path = tmp.name
-        else:
-            st.info("No translated text yet.")
-with speak_col2:
-    if "last_audio_path" in st.session_state:
-        st.audio(st.session_state.last_audio_path, format="audio/mp3")
+if st.button("🔊 Speak Latest Translation"):
+    if st.session_state.tran_buffer:
+        to_speak = st.session_state.tran_buffer[-1]
+        tts = gTTS(to_speak, lang=output_lang)
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+        tts.save(tmp.name)
+        st.session_state.last_audio_path = tmp.name
+        st.audio(tmp.name, format="audio/mp3")
+    else:
+        st.info("No translated text yet.")
 
 # -----------------------
-# Utilities
+# Clear transcripts
 # -----------------------
 st.divider()
-u1, u2, u3 = st.columns(3)
-with u1:
-    if st.button("Clear Transcripts"):
-        st.session_state.orig_buffer = []
-        st.session_state.tran_buffer = []
-        st.session_state.last_translated_text = ""
-        st.session_state.pop("last_audio_path", None)
-with u2:
-    st.caption("Tip: If recognition is off, re-check language selections and try shorter segments.")
-with u3:
-    st.caption("Note: Accuracy for medical terminology may vary with this stack.")
+if st.button("🧹 Clear Transcripts"):
+    st.session_state.orig_buffer = []
+    st.session_state.tran_buffer = []
+    st.session_state.last_audio_path = None
+    st.success("Transcripts cleared.")
