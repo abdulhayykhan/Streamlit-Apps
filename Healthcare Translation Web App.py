@@ -7,7 +7,7 @@ from audiorecorder import audiorecorder
 import tempfile
 import os
 
-st.set_page_config(page_title="Healthcare Translation Web App", layout="wide")
+st.set_page_config(page_title="Healthcare Translation Web App", layout="wide", page_icon="🩺")
 st.title("🩺 Healthcare Translation Web App")
 st.caption("Real-time multilingual communication between patients and healthcare providers.")
 
