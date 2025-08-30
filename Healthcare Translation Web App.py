@@ -11,9 +11,9 @@ st.set_page_config(page_title="Healthcare Translation Web App with Generative AI
 st.title("🩺 Healthcare Translation Web App")
 st.caption("Real-time multilingual communication between patients and healthcare providers.")
 
-# -----------------------
+# ------------------------------------------
 # Supported Languages (translation + speech)
-# -----------------------
+# ------------------------------------------
 LANGS = {
     "English": "en",
     "Spanish": "es",
@@ -41,9 +41,9 @@ TTS_LANG = {
     "ko": "ko", "ru": "ru", "pt": "pt", "it": "it",
 }
 
-# -----------------------
+# --------------
 # Session State
-# -----------------------
+# --------------
 def ensure_state():
     st.session_state.setdefault("orig_buffer", [])
     st.session_state.setdefault("tran_buffer", [])
@@ -62,9 +62,9 @@ with col_lang2:
 IN_CODE = LANGS[in_name]
 OUT_CODE = LANGS[out_name]
 
-# -----------------------
+# --------
 # Helpers
-# -----------------------
+# --------
 def convert_to_wav(input_path_or_file) -> str:
     """Convert any audio (mp3/wav/etc.) to PCM WAV and return path."""
     audio = AudioSegment.from_file(input_path_or_file)
@@ -114,9 +114,9 @@ def save_uploaded_to_temp(uploaded) -> str:
     tmp.flush()
     return tmp.name
 
-# -----------------------
+# -------------------------------
 # Layout: transcripts (read-only)
-# -----------------------
+# -------------------------------
 c1, c2 = st.columns(2)
 with c1:
     st.subheader("🎤 Original Transcript")
@@ -127,9 +127,9 @@ with c2:
 
 st.divider()
 
-# -----------------------
+# -------------
 # Mic Recorder
-# -----------------------
+# -------------
 st.subheader("🎙️ Record Speech")
 mic_audio = audiorecorder("🔴 Record", "⏹️ Stop", key=f"rec_{st.session_state.rec_key}")
 
@@ -148,9 +148,9 @@ if len(mic_audio) > 0:
     st.session_state.rec_key += 1
     st.rerun()
 
-# -----------------------
+# --------------
 # File Uploader
-# -----------------------
+# --------------
 st.subheader("📂 Upload Audio File")
 uploaded = st.file_uploader(
     "Upload audio (WAV/MP3 supported)",
@@ -170,9 +170,9 @@ if uploaded is not None:
         st.session_state.uploader_key += 1
         st.rerun()
 
-# -----------------------
+# -------------------------
 # Speak latest translation
-# -----------------------
+# -------------------------
 st.subheader("🔊 Audio Playback")
 if st.button("Speak Latest Translation"):
     if st.session_state.tran_buffer:
@@ -181,9 +181,9 @@ if st.button("Speak Latest Translation"):
     else:
         st.info("No translated text available.")
 
-# -----------------------
+# ---------------------
 # Download transcripts
-# -----------------------
+# ---------------------
 if st.session_state.orig_buffer or st.session_state.tran_buffer:
     transcript = (
         "Original Transcript:\n" + "\n".join(st.session_state.orig_buffer) + "\n\n" +
@@ -193,9 +193,9 @@ if st.session_state.orig_buffer or st.session_state.tran_buffer:
 
 st.divider()
 
-# -----------------------
+# --------------------------------
 # Clear Transcripts (robust reset)
-# -----------------------
+# --------------------------------
 if st.button("🧹 Clear Transcripts"):
     st.session_state.orig_buffer = []
     st.session_state.tran_buffer = []
