@@ -8,7 +8,7 @@ import tempfile
 import os
 
 st.set_page_config(page_title="Healthcare Translation Web App with Generative AI", layout="wide", page_icon="🩺")
-st.title("🩺 Healthcare Translation Web App")
+st.title("🩺 Healthcare Translation Web App with Generative AI")
 st.caption("Real-time multilingual communication between patients and healthcare providers.")
 
 # ------------------------------------------
